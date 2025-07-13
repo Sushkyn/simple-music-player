@@ -15,7 +15,8 @@ cleanup() {
 trap cleanup INT TERM EXIT
 
 while true; do
-    echo " Add songs to queue. Press Enter when done:"
+    echo " Welcome to music-play. Add songs to queue. Press Enter when done:"
+    espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to music-play. Add songs to queue. Press Enter when done:"
     queue=()
 
     while true; do
@@ -33,11 +34,13 @@ while true; do
 
     for song in "${queue[@]}"; do
         echo " Now playing: $song"
+        espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now.....  Playing:  $song"
 
         STREAM_URL=$(yt-dlp -f 'bestaudio[abr<=64]/bestaudio' -g "ytsearch1:$song" 2>/dev/null)
 
         if [ -z "$STREAM_URL" ]; then
             echo " Failed to get stream URL for: $song"
+            espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Failed to get stream URL for: $song" 
             continue
         fi
 
@@ -58,4 +61,5 @@ while true; do
     done
 
     echo " Queue finished. Add more songs or Ctrl+C to quit."
+    espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Queue finished. Add more songs or quit."
 done
