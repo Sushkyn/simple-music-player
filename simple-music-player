@@ -51,7 +51,7 @@ while true; do
          --msg-level=all=no \
          --term-status-msg='▶ ${playback-time} / ${duration} (${percent-pos}%) Cache: ${demuxer-cache-time}s' &
         wait $MPV_PID
-
+        MPV_PID=$!
         echo ""
     done
 
