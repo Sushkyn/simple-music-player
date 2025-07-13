@@ -47,6 +47,7 @@ while true; do
 
         mpv --no-video --quiet "$STREAM_URL" &
         MPV_PID=$!
+        wait $MPV_PID
 
         echo ""
     done
