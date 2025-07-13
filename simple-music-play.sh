@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 command -v yt-dlp >/dev/null || { echo " yt-dlp not found"; exit 1; }
 command -v mpv >/dev/null || { echo "  mpv not found"; exit 1; }
@@ -10,7 +10,6 @@ mkdir -p "$CACHEDIR"
 cleanup() {
     echo -e "\n Cleaning up..."
     rm -rf "$CACHEDIR"
-    stty sane
     exit 0
 }
 trap cleanup INT TERM EXIT
