@@ -10,6 +10,7 @@ mkdir -p "$CACHEDIR"
 cleanup() {
     echo -e "\n Cleaning up..."
     rm -rf "$CACHEDIR"
+    stty sane
     exit 0
 }
 trap cleanup INT TERM EXIT
