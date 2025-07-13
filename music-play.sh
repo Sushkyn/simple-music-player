@@ -1,5 +1,4 @@
-#!/bin/bash
-# Dependencies check
+#!/data/data/com.termux/files/usr/bin/bash
 command -v yt-dlp >/dev/null || { echo "#  yt-dlp not found"; exit 1; }
 command -v ffmpeg >/dev/null || { echo "#  ffmpeg not found"; exit 1; }
 command -v aplay >/dev/null || { echo "#  aplay not found"; exit 1; }
@@ -17,7 +16,7 @@ cleanup() {
 trap cleanup INT TERM EXIT
 
 while true; do
-	echo "#  Add songs to queue. press Enter to start playing."
+	echo " Add songs to queue. press Enter to start playing."
     queue=()
 
     while true; do
@@ -57,11 +56,9 @@ while true; do
         done
         echo ""
 
-        # Play audio in background
         aplay "$AUDIO_WAV" &
         APLAY_PID=$!
 
-        # Listen for 'n' key to skip
         while kill -0 $APLAY_PID 2>/dev/null; do
             read -rsn1 -t 0.1 key
             if [[ "$key" == "n" ]]; then
