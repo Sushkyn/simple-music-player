@@ -45,7 +45,7 @@ while true; do
             continue
         fi
 
-        mpv  --term-status-msg='${percent-pos}% | ${playback-time} / ${duration}' --no-video --quiet "$STREAM_URL" &
+        mpv --term-status-msg='${percent-pos}% | ${playback-time} / ${duration}' --no-video --quiet "$STREAM_URL" &
         MPV_PID=$!
         wait $MPV_PID
 
