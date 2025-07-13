@@ -53,7 +53,6 @@ while true; do
          MPV_PID=$!
          wait $MPV_PID
 
-        echo ""
     done
 
     echo " Queue finished. Add more songs or Ctrl+C to quit."
