@@ -50,7 +50,7 @@ while true; do
          --quiet \
          --msg-level=ao=error \
          --msg-level=ffmpeg=error \
-         --term-playing-msg='Now playing: ${song}' \
+         --term-playing-msg='Now playing: $song' \
          --term-status-msg='${percent-pos}% | ${playback-time} / ${duration}' &
         MPV_PID=$!
         wait $MPV_PID
