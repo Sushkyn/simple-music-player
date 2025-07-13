@@ -47,11 +47,7 @@ while true; do
 
         mpv "$STREAM_URL" \
          --no-video \
-         --quiet \
-         --msg-level=ao=error \
-         --msg-level=ffmpeg=error \
-         --term-playing-msg='Now playing: $song' \
-         --term-status-msg='${percent-pos}% | ${playback-time} / ${duration}' &
+         --quiet &
         MPV_PID=$!
         wait $MPV_PID
 
