@@ -14,7 +14,6 @@ cleanup() {
     exit 0
 }
 trap cleanup INT TERM EXIT
-
 clear
 while true; do
     echo " Welcome to music-play. Add songs to queue. Press Enter when done:"
