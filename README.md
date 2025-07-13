@@ -1,5 +1,5 @@
 # music-play
-playing music in shell for termux/linux.
+Music Player - Music for everyone
 
 needed packages
 mpv yt-dlp
