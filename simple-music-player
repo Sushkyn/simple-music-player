@@ -48,6 +48,8 @@ while true; do
         mpv "$STREAM_URL" \
          --no-video \
          --quiet \
+         --msg-level=all=no \
+         --msg-level=status=info \
          --term-status-msg='${percent-pos}% | ${playback-time} / ${duration}${?time-remaining: | ${time-remaining} left}' &
         MPV_PID=$!
         wait $MPV_PID
