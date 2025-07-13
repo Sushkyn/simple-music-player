@@ -5,4 +5,4 @@ needed packages:
 mpv, yt-dlp, espeak or espeak-ng
 
 # run
-```curl -LO https://raw.githubusercontent.com/Sushkyn/music-play/main/music-play.sh && chmod +x music-play.sh && ./music-play.sh```
+```curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player.sh && chmod +x simple-music-player.sh && ./simple-music-player.sh```
