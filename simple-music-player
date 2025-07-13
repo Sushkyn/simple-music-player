@@ -50,7 +50,7 @@ while true; do
 
         while kill -0 $MPV_PID 2>/dev/null; do
             read -rsn1 -t 0.1 key
-            if [[ "$key" == "n" ]]; then
+            if [[ "$key" == "j" ]]; then
                 echo " Skipping..."
                 kill $MPV_PID
                 wait $MPV_PID 2>/dev/null
