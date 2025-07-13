@@ -16,7 +16,7 @@ trap cleanup INT TERM EXIT
 
 while true; do
     echo " Welcome to music-play. Add songs to queue. Press Enter when done:"
-    espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to music-play. Add songs to queue. Press Enter when done:"
+    espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to music-play."
     queue=()
 
     while true; do
