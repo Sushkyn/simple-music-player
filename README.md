@@ -1,5 +1,5 @@
 # music-play
-playing music in shell for linux.
+playing music in shell for termux/linux.
 
 needed packages
 ffmpeg aplay yt-dlp
