@@ -31,7 +31,7 @@ while true; do
         continue
     fi
 
-    echo -e "\n Starting playback... (press 'n' to skip current song)\n"
+    echo -e "\n Starting playback... (press 'j' to skip song, left right arrow to move seconds, shift+l to loop.)\n"
 
     for song in "${queue[@]}"; do
         echo " Now playing: $song"
@@ -47,16 +47,6 @@ while true; do
 
         mpv --no-video --quiet "$STREAM_URL" &
         MPV_PID=$!
-
-        while kill -0 $MPV_PID 2>/dev/null; do
-            read -rsn1 -t 0.1 key
-            if [[ "$key" == "j" ]]; then
-                echo " Skipping..."
-                kill $MPV_PID
-                wait $MPV_PID 2>/dev/null
-                break
-            fi
-        done
 
         echo ""
     done
