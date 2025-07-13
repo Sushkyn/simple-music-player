@@ -49,8 +49,7 @@ while true; do
          --no-video \
          --quiet \
          --msg-level=all=no \
-         --osd-msg1='l> ${playback-time} / ${duration} (${percent-pos}%) Cache: ${demuxer-cache-time}s' \
-         --osd-duration=1000000 &
+         --term-status-msg='▶ ${playback-time} / ${duration} (${percent-pos}%) Cache: ${demuxer-cache-time}s' &
         MPV_PID=$!
         wait $MPV_PID
 
