@@ -7,7 +7,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CACHEDIR="$SCRIPT_DIR/cachemusic"
 mkdir -p "$CACHEDIR"
 
-# Cleanup on exit
 cleanup() {
     echo -e "\n Cleaning up..."
     rm -rf "$CACHEDIR"
@@ -30,7 +29,7 @@ while true; do
         continue
     fi
 
-    echo -e "\nStarting playback... (press 'n' to skip current song)\n"
+    echo -e "\n Starting playback... (press 'n' to skip current song)\n"
 
     for song in "${queue[@]}"; do
         ts=$(date +%s%N)
@@ -49,7 +48,7 @@ while true; do
 
         ffmpeg -loglevel quiet -y -i "$AUDIO_MP3" -f wav "$AUDIO_WAV" &
 
-        echo -n "# #  Preparing audio"
+        echo -n " Preparing audio"
         while [ ! -s "$AUDIO_WAV" ]; do
             sleep 0.5
             echo -n "."
