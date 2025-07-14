@@ -3,6 +3,7 @@
 command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but not installed. Exiting."; exit 1; }
 command -v wget >/dev/null 2>&1 || { echo >&2 "wget is required but not installed. Exiting."; exit 1; }
 command -v fzf >/dev/null 2>&1 || { echo >&2 "fzf is required but not installed. Exiting."; exit 1; }
+command -v ffmpeg >/dev/null 2>&1 || { echo >&2 "ffmpeg is required but not installed. Exiting."; exit 1; }
 
 espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Enter an album name."
 echo "Enter an album name to search on Archive.org (FLAC only) >_:"
