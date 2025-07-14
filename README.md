@@ -18,17 +18,6 @@ simple-album-downloader:
 
     jq
 
- Features
-
-     Search music and play directly via YouTube
-
-     Queue multiple tracks
-
-     Loop playback
-
-     Play full local albums (FLAC support)
-
-     Download entire albums from Archive.org in FLAC format
     
 Run the Music Player
 ```
