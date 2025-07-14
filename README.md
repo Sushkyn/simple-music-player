@@ -8,3 +8,6 @@ packages for download script:
  fzf wget jq
 # run
 ```curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player```
+# downloading albums
+```curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-album-download && chmod +x simple-album-download && ./simple-album-download```
+
