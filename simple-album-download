@@ -54,8 +54,8 @@ echo "Download complete. Files saved in: $identifier/"
 espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Download complete."
 read -rp $'\nDo you want to listen to the album? (Y/N) >_: ' play
 espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Do you want to listen to the album."
-    if [[ "$play" == "Y" ]]; then
-        curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player "$identifier"
+if [[ "$play" =~ ^[Yy]$ ]]; then        
+	curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player "$identifier"
 	continue
     else
         echo "Okay, not playing it now. Goodbye."
