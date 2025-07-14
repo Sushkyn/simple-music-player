@@ -31,9 +31,10 @@ while true; do
         continue
     fi
 
-    echo -e "\n Starting playback... (press 'j' to skip song, left right arrow to move seconds, shift+l to loop.)\n"
+    echo -e "\n Starting playback... (press 'q' to skip song, left right arrow to move seconds, shift+l to loop.)\n"
 
     for song in "${queue[@]}"; do
+	clear
         echo " Now playing: $song"
         espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now.....  Playing:  $song"
 
@@ -41,15 +42,23 @@ while true; do
 
         if [ -z "$STREAM_URL" ]; then
             echo " Failed to get stream URL for: $song"
-            espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Failed to get stream URL for: $song" 
+            espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Failed to get stream URL for: $song"
             continue
         fi
 
         mpv --no-video --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
-        
+
         MPV_PID=$!
         wait "$MPV_PID"
-
+        while kill -0 $MPV_PID 2>/dev/null; do
+            read -rsn1 -t 0.1 key
+            if [[ "$key" == "q" ]]; then
+                echo " Skipping..."
+                kill $MPV_PID
+                wait $MPV_PID 2>/dev/null
+                break
+            fi
+        done
         echo ""
     done
 
