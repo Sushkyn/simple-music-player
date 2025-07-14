@@ -77,7 +77,7 @@ while true; do
     done
     espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Do you want to loop the playlist?"
     read -rp $'\nDo you want to loop the playlist? (Y/N) >_: ' playlist_loop
-    playlist_loop=${playlist_loop^^}  # Convert to uppercase
+    playlist_loop=${playlist_loop^^} 
 
     if [[ "$playlist_loop" == "Y" ]]; then
         echo " Replaying playlist..."
