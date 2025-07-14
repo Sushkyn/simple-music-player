@@ -51,11 +51,18 @@ echo "$file_list" | while IFS= read -r file; do
     wget --show-progress --content-disposition "https://archive.org/download/$identifier/$file"
 done
 
+for i in *.flac; do
+    echo "Converting: $i"
+    ffmpeg -i "$i" -y -v 0 -vcodec copy -acodec alac "${i%.flac}.m4a"
+    rm -f "$i"
+done
+
 echo "Download complete. Files saved in: $identifier/"
 espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Download complete."
 read -rp $'\nDo you want to listen to the album? (Y/N) >_: ' play
 espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Do you want to listen to the album."
-if [[ "$play" =~ ^[Yy]$ ]]; then        
+
+if [[ "$play" =~ ^[Yy]$ ]]; then
 	curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player "$identifier"
     else
         echo "Okay, not playing it now. Goodbye."
