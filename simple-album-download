@@ -4,7 +4,8 @@ command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but not installed. E
 command -v wget >/dev/null 2>&1 || { echo >&2 "wget is required but not installed. Exiting."; exit 1; }
 command -v fzf >/dev/null 2>&1 || { echo >&2 "fzf is required but not installed. Exiting."; exit 1; }
 
-echo "Enter album name to search on Archive.org (FLAC only) >_:"
+espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Enter an album name."
+echo "Enter an album name to search on Archive.org (FLAC only) >_:"
 read -r query
 
 echo "Searching archive.org for \"$query\"..."
@@ -50,8 +51,9 @@ echo "$file_list" | while IFS= read -r file; do
 done
 
 echo "Download complete. Files saved in: $identifier/"
-
-read -rp $'\nDo you want to listen the album? (Y/N) >_: ' play
+espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Download complete."
+read -rp $'\nDo you want to listen to the album? (Y/N) >_: ' play
+espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Do you want to listen to the album."
     if [[ "$play" == "Y" ]]; then
         curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player "$identifier"
 	continue
