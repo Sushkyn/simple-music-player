@@ -6,7 +6,7 @@ simple-music-player:
 mpv, yt-dlp, espeak or espeak-ng (for optional voice feedback)
 
 simple-album-downloader:
-fzf (for fuzzy selection), wget, jq
+fzf (for fuzzy selection), wget, jq, ffmpeg
 
     
 ### Run the Music Player
