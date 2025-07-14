@@ -45,7 +45,7 @@ while true; do
             continue
         fi
 
-        mpv --quiet --no-video --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
+        mpv --no-video --term-status-msg='l> ${time-pos} / ${duration}'  --msg-level=ao=warn,ffmpeg=warn,status=info "$STREAM_URL" &
         
         MPV_PID=$!
         wait "$MPV_PID"
