@@ -50,9 +50,10 @@ while true; do
          --quiet \
          --msg-level=all=no \
          --term-status-msg=' l> ${time-pos} / ${duration}' \
-         --msg-level=status=info \
-         MPV_PID=$!
-         wait $MPV_PID
+         --msg-level=status=info &
+         
+        MPV_PID=$!
+        wait "$MPV_PID"
 
         echo ""
     done
