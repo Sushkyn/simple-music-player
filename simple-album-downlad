@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but not installed. Exiting."; exit 1; }
+command -v wget >/dev/null 2>&1 || { echo >&2 "wget is required but not installed. Exiting."; exit 1; }
+command -v fzf >/dev/null 2>&1 || { echo >&2 "fzf is required but not installed. Exiting."; exit 1; }
+
+echo "Enter album name to search on Archive.org (FLAC only) >_:"
+read -r query
+
+echo "Searching archive.org for \"$query\"..."
+
+search_query=$(echo "$query" | sed 's/ /+/g')
+
+results=$(curl -s "https://archive.org/advancedsearch.php?q=$search_query+AND+format%3A(FLAC)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=20&page=1&output=json")
+
+mapfile -t identifiers < <(echo "$results" | jq -r '.response.docs[] | "\(.title) [\(.identifier)]"')
+
+if [ ${#identifiers[@]} -eq 0 ]; then
+    echo "No FLAC albums found for '$query'."
+    exit 1
+fi
+
+if command -v fzf >/dev/null 2>&1; then
+    selected=$(printf '%s\n' "${identifiers[@]}" | fzf --prompt="Select album: ")
+else
+    echo "Select an album:"
+    select selected in "${identifiers[@]}"; do
+        break
+    done
+fi
+
+identifier=$(echo "$selected" | sed -E 's/.*\[(.*)\]/\1/')
+
+echo "Fetching FLAC files for: $identifier..."
+
+file_list=$(curl -s "https://archive.org/metadata/$identifier" | jq -r '.files[] | select(.format=="Flac") | .name')
+
+if [ -z "$file_list" ]; then
+    echo "No FLAC files found in this item."
+    exit 1
+fi
+
+mkdir -p "$identifier"
+cd "$identifier" || exit 1
+
+echo "$file_list" | while IFS= read -r file; do
+    file_url="https://archive.org/download/$identifier/$(printf %q "$file")"
+    echo "Downloading: $file"
+    wget --show-progress --content-disposition "https://archive.org/download/$identifier/$file"
+done
+
+echo "Download complete. Files saved in: $identifier/"
+
+read -rp $'\nDo you want to listen the album? (Y/N) >_: ' play
+    if [[ "$play" == "Y" ]]; then
+        curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player "$identifier"
+	continue
+    else
+	break
+    fi
