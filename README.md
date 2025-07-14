@@ -13,7 +13,7 @@ fzf (for fuzzy selection), wget, jq, ffmpeg
 ```
 curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player
 ```
-Play a Local Album
+### Play a Local Album
 ```
 ./simple-music-player /path/to/your/album_directory
 ```
