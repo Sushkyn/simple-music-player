@@ -83,7 +83,7 @@ while true; do
         echo " Replaying playlist..."
         continue
     else
-        echo " Queue finished. Add more songs or Ctrl+C to quit."
+        echo " Queue finished."
         espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Queue finished."
         queue=()
     fi
