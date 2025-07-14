@@ -22,33 +22,37 @@ if [ -n "$1" ] && [ -d "$1" ]; then
         queue+=("$file")
     done < <(find "$1" -type f \( -iname "*.mp3" -o -iname "*.wav" -o -iname "*.flac" -o -iname "*.ogg" -o -iname "*.m4a" \) -print0)
 fi
+playlist_loop="N"
+
 while true; do
-   if [ ${#queue[@]} -eq 0 ]; then
-    echo " Welcome to simple-music-player. Add songs to queue. Press Enter when done:"
-    espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to simple-music-player."
-
-    while true; do
-        read -rp ">_: " song
-        [ -z "$song" ] && break
-        queue+=("$song")
-    done
-
     if [ ${#queue[@]} -eq 0 ]; then
-   	echo " Queue is empty. Add songs first."
-        continue
+        echo " Welcome to simple-music-player. Add songs to queue. Press Enter when done:"
+        espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to simple-music-player."
+
+        while true; do
+            read -rp ">_: " song
+            [ -z "$song" ] && break
+            queue+=("$song")
+        done
+
+        if [ ${#queue[@]} -eq 0 ]; then
+            echo " Queue is empty. Add songs first."
+            continue
+        fi
     fi
-   fi
+
     echo -e "\n Starting playback... (press 'q' to skip song, left right arrow to move seconds, shift+l to loop.)\n"
 
     for song in "${queue[@]}"; do
-	clear
+        clear
         echo " Now playing: $song"
         espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now.....  Playing:  $song"
-	if [[ -f "$song" ]]; then
-   	    STREAM_URL="$song"
-	else
-   	    STREAM_URL=$(yt-dlp -f 'bestaudio[abr<=64]/bestaudio' -g "ytsearch1:$song" 2>/dev/null)
-	fi
+
+        if [[ -f "$song" ]]; then
+            STREAM_URL="$song"
+        else
+            STREAM_URL=$(yt-dlp -f 'bestaudio[abr<=64]/bestaudio' -g "ytsearch1:$song" 2>/dev/null)
+        fi
 
         if [ -z "$STREAM_URL" ]; then
             echo " Failed to get stream URL for: $song"
@@ -71,7 +75,16 @@ while true; do
         done
         echo ""
     done
+    espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Do you want to loop the playlist?"
+    read -rp $'\nDo you want to loop the playlist? (Y/N) >_: ' playlist_loop
+    playlist_loop=${playlist_loop^^}  # Convert to uppercase
 
-    echo " Queue finished. Add more songs or Ctrl+C to quit."
-    espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Queue finished. Add more songs or quit."
+    if [[ "$playlist_loop" == "Y" ]]; then
+        echo " Replaying playlist..."
+        continue
+    else
+        echo " Queue finished. Add more songs or Ctrl+C to quit."
+        espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Queue finished."
+        queue=()
+    fi
 done
