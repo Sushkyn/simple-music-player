@@ -56,5 +56,5 @@ read -rp $'\nDo you want to listen the album? (Y/N) >_: ' play
         curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player "$identifier"
 	continue
     else
-	break
+        echo "Okay, not playing it now. Goodbye."
     fi
