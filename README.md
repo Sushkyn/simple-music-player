@@ -1,11 +1,11 @@
 A lightweight terminal-based music player and album downloader built with mpv.
 Search, queue, loop, and play — from YouTube or local FLAC collections.
 
-### Requirements
-simple-music-player:
+### Required packages
+for simple-music-player:
 mpv, yt-dlp, espeak or espeak-ng (for optional voice feedback)
 
-simple-album-downloader:
+for simple-album-downloader:
 fzf (for fuzzy selection), wget, jq, ffmpeg
 
     
