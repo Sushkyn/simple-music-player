@@ -10,7 +10,7 @@ mkdir -p "$CACHEDIR"
 cleanup() {
     echo -e "\n Cleaning up..."
     rm -rf "$CACHEDIR"
-    stty sane
+    reset
     exit 0
 }
 trap cleanup INT TERM EXIT
@@ -21,6 +21,13 @@ if [ -n "$1" ] && [ -d "$1" ]; then
     while IFS= read -r -d '' file; do
         queue+=("$file")
     done < <(find "$1" -type f \( -iname "*.mp3" -o -iname "*.wav" -o -iname "*.flac" -o -iname "*.ogg" -o -iname "*.m4a" \) -print0)
+fi
+
+if [ -n "$1" ] && [ -f "$1" ]; then
+    echo " Found playlist file: $1. Queuing songs..."
+    while IFS= read -r line; do
+        [ -n "$line" ] && queue+=("$line")
+    done < "$1"
 fi
 playlist_loop="N"
 
@@ -77,7 +84,7 @@ while true; do
     done
     espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Do you want to loop the playlist?"
     read -rp $'\nDo you want to loop the playlist? (Y/N) >_: ' playlist_loop
-    playlist_loop=${playlist_loop^^} 
+    playlist_loop=${playlist_loop^^}
 
     if [[ "$playlist_loop" == "Y" ]]; then
         echo " Replaying playlist..."
