@@ -1,8 +1,9 @@
 <div align="center">
-A lightweight terminal-based music player and album downloader built with mpv.
-Search, queue, loop, and play — from YouTube or local FLAC collections.
 
 ![Description](example.png)
+
+A lightweight terminal-based music player and album downloader built with mpv.
+Search, queue, loop, and play — from YouTube or local FLAC collections.
 </div>
 
 ---
