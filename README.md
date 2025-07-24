@@ -12,6 +12,9 @@ Search, queue, loop, and play — from YouTube or local FLAC collections.
  
  - Play & share your playlist in a text file format. ex: `./simple-music-player playlist.txt`
  - Play your local albums. `./simple-music-player /path/to/your/album_directory`
+ - Loop current song with Shift+l
+ - skip current song with q
+ - use arrows to skip seconds in current song
 
 
 #### Required packages
