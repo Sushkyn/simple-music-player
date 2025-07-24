@@ -4,18 +4,44 @@ command -v yt-dlp >/dev/null || { echo " yt-dlp not found"; exit 1; }
 command -v mpv >/dev/null || { echo "  mpv not found"; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CACHEDIR="$SCRIPT_DIR/cachemusic"
-mkdir -p "$CACHEDIR"
 
 cleanup() {
     echo -e "\n Cleaning up..."
-    rm -rf "$CACHEDIR"
     reset
     exit 0
 }
 trap cleanup INT TERM EXIT
 clear
 queue=()
+echo " Welcome to simple-music-player."
+espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to simple-music-player."
+while true; do
+    echo "Select mode:"
+    echo "1) normal quality - yt-dlp opus online streaming (default)"
+    echo "2) high quality   - flac type online streaming"
+    echo "3) local album    - download from web archive"
+    read -rp ">_: " mode
+    mode="${mode:-1}"
+    [[ "$mode" == "1" || "$mode" == "2" || "$mode" == "3" ]] && break
+    echo "Invalid selection. Please choose 1, 2, or 3."
+done
+
+if [[ "$mode" == "3" ]]; then
+    read -rp "Enter album directory path: " album_dir
+    if [ -d "$album_dir" ]; then
+        echo " Found directory: $album_dir. Queuing audio files..."
+        while IFS= read -r -d '' file; do
+            queue+=("$file")
+        done < <(find "$album_dir" -type f \( -iname "*.mp3" -o -iname "*.wav" -o -iname "*.flac" -o -iname "*.ogg" -o -iname "*.m4a" \) -print0)
+    else
+        echo " Directory not found."
+        exit 1
+    fi
+elif [[ "$mode" == "2" ]]; then
+    echo " FLAC online listening not implemented yet."
+    exit 0
+fi
+
 if [ -n "$1" ] && [ -d "$1" ]; then
     echo " Found directory: $1. Queuing audio files..."
     while IFS= read -r -d '' file; do
@@ -32,10 +58,8 @@ fi
 playlist_loop="N"
 
 while true; do
-    if [ ${#queue[@]} -eq 0 ]; then
-        echo " Welcome to simple-music-player. Add songs to queue. Press Enter when done:"
-        espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to simple-music-player."
-
+    if [ ${#queue[@]} -eq 0 ] && [[ "$mode" == "1" ]]; then
+	echo " Add songs to Queue."
         while true; do
             read -rp ">_: " song
             [ -z "$song" ] && break
@@ -43,12 +67,12 @@ while true; do
         done
 
         if [ ${#queue[@]} -eq 0 ]; then
-            echo " Queue is empty. Add songs first."
+            echo " Queue is empty."
             continue
         fi
     fi
 
-    echo -e "\n Starting playback... (press 'q' to skip song, left right arrow to move seconds, shift+l to loop.)\n"
+    echo -e "\n Starting playback... \n"
 
     for song in "${queue[@]}"; do
         clear
@@ -58,7 +82,7 @@ while true; do
         if [[ -f "$song" ]]; then
             STREAM_URL="$song"
         else
-	        STREAM_URL=$(yt-dlp -f 'worstaudio' -g "ytsearch1:$song" 2>/dev/null)
+            STREAM_URL=$(yt-dlp -f 'worstaudio' -g "ytsearch1:$song" 2>/dev/null)
         fi
 
         if [ -z "$STREAM_URL" ]; then
@@ -67,7 +91,11 @@ while true; do
             continue
         fi
 
-        mpv --no-video --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
+        if [[ "$mode" == "1" ]]; then
+            mpv --no-video --cache-secs=30 --demuxer-max-bytes=50MiB --demuxer-max-back-bytes=10MiB --cache-pause=yes --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
+        else
+            mpv --no-video --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
+        fi
 
         MPV_PID=$!
         wait "$MPV_PID"
