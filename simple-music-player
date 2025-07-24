@@ -4,6 +4,14 @@ command -v yt-dlp >/dev/null || { echo " yt-dlp not found"; exit 1; }
 command -v mpv >/dev/null || { echo "  mpv not found"; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [[ -n "$1" && -f "$1" && "$1" == *.txt ]]; then
+    echo " Found playlist file: $1. Queuing songs..."
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && queue+=("$line")
+    done < "$1"
+    mode="1"  # Assume online yt-dlp playback
+    skip_mode_selection=true
+fi
 
 cleanup() {
     echo -e "\n Cleaning up..."
@@ -15,17 +23,18 @@ clear
 queue=()
 echo " Welcome to simple-music-player."
 espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to simple-music-player."
-while true; do
-    echo "Select mode:"
-    echo "1) normal quality - yt-dlp opus online streaming (default)"
-    echo "2) high quality   - flac type online streaming"
-    echo "3) local album    - download from web archive"
-    read -rp ">_: " mode
-    mode="${mode:-1}"
-    [[ "$mode" == "1" || "$mode" == "2" || "$mode" == "3" ]] && break
-    echo "Invalid selection. Please choose 1, 2, or 3."
-done
-
+if [[ "$skip_mode_selection" != "true" ]]; then
+    while true; do
+        echo "Select mode:"
+        echo "1) normal quality - yt-dlp opus online streaming (default)"
+        echo "2) high quality   - flac type online streaming"
+        echo "3) local album    - download from web archive"
+        read -rp ">_: " mode
+        mode="${mode:-1}"
+        [[ "$mode" == "1" || "$mode" == "2" || "$mode" == "3" ]] && break
+        echo "Invalid selection. Please choose 1, 2, or 3."
+    done
+fi
 if [[ "$mode" == "3" ]]; then
     read -rp "Enter album directory path: " album_dir
     if [ -d "$album_dir" ]; then
