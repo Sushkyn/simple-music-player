@@ -4,6 +4,7 @@ Search, queue, loop, and play — from YouTube or local FLAC collections.
 
 ![Description](example.png)
 </div>
+
 ---
 
 #### Features
