@@ -9,7 +9,7 @@ if [[ -n "$1" && -f "$1" && "$1" == *.txt ]]; then
     while IFS= read -r line; do
         [[ -n "$line" ]] && queue+=("$line")
     done < "$1"
-    mode="1"  # Assume online yt-dlp playback
+    mode="1" 
     skip_mode_selection=true
 fi
 
