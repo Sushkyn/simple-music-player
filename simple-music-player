@@ -66,7 +66,7 @@ elif [[ "$mode" == "2" ]]; then
 
         echo " Streaming: $actual_flac_url"
         espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Now playing..."
-        mpv --no-video --cache-secs=30 --demuxer-max-bytes=50MiB --demuxer-max-back-bytes=10MiB --cache-pause=yes --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$actual_flac_url"
+        mpv --no-video --no-ytdl --cache-secs=30 --demuxer-max-bytes=50MiB --demuxer-max-back-bytes=10MiB --cache-pause=yes --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$actual_flac_url"
     done
     exit 0
 fi
