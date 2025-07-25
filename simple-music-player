@@ -48,7 +48,6 @@ if [[ "$mode" == "3" ]]; then
         exit 1
     fi
 elif [[ "$mode" == "2" ]]; then
-
     while true; do
         echo -e "\n Enter search query (FLAC only, archive.org):"
         read -rp ">_: " query
@@ -78,17 +77,15 @@ elif [[ "$mode" == "2" ]]; then
         selected_track=$(echo "$file_list" | fzf --prompt="Select track > ")
         [ -z "$selected_track" ] && continue
 
-	encoded_file=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$selected_track'''))")
-	stream_url="https://archive.org/download/$identifier/$encoded_file"
+        file_url="https://archive.org/download/$identifier/$(printf '%s' "$selected_track" | sed 's| |%20|g')"
 
-	echo " Now playing: $selected_track"
+        echo " Now playing: $selected_track"
 	espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing $query"
-	mpv --no-video --no-ytdl --cache-secs=30 --user-agent='Mozilla/5.0' "$stream_url"
-	done
+        mpv --no-video --no-ytdl --cache-secs=30 --cache-pause=yes "$file_url"
+    done
 
     exit 0
 fi
-
 if [ -n "$1" ] && [ -d "$1" ]; then
     echo " Found directory: $1. Queuing audio files..."
     while IFS= read -r -d '' file; do
