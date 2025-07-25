@@ -82,7 +82,7 @@ elif [[ "$mode" == "2" ]]; then
 	stream_url="https://archive.org/download/$identifier/$encoded_file"
 
 	echo " Now playing: $selected_track"
-	espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing:$query"
+	espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing $query"
 	mpv --no-video --no-ytdl --cache-secs=30 --user-agent='Mozilla/5.0' "$stream_url"
 	done
 
