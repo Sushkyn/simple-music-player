@@ -2,6 +2,7 @@
 
 command -v yt-dlp >/dev/null || { echo " yt-dlp not found"; exit 1; }
 command -v mpv >/dev/null || { echo "  mpv not found"; exit 1; }
+command -v jq >/dev/null || { echo "jq not found"; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 if [[ -n "$1" && -f "$1" && "$1" == *.txt ]]; then
@@ -47,27 +48,44 @@ if [[ "$mode" == "3" ]]; then
         exit 1
     fi
 elif [[ "$mode" == "2" ]]; then
+
     while true; do
-        echo -e "\n Enter full flacmusicfinder page URL (or leave blank to quit):"
-        read -rp ">_: " flac_page
+        echo -e "\n Enter search query (FLAC only, archive.org):"
+        read -rp ">_: " query
+        [ -z "$query" ] && break
 
-        if [ -z "$flac_page" ]; then
-            echo " Exiting FLAC mode..."
-            break
-        fi
+        search_url="https://archive.org/advancedsearch.php?q=${query// /+}+AND+format%3A(FLAC)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=20&page=1&output=json"
+        results=$(curl -s "$search_url")
 
-        actual_flac_url=$(curl -s "$flac_page" | grep -Eo 'https://hostuje\.net/file\.php\?id=[a-zA-Z0-9]+' | head -n 1)
+        mapfile -t items < <(echo "$results" | jq -r '.response.docs[] | "\(.title) [\(.identifier)]"')
 
-        if [ -z "$actual_flac_url" ]; then
-            echo " Failed to extract FLAC URL."
-            espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Failed to extract FLAC URL"
+        if [ ${#items[@]} -eq 0 ]; then
+            echo "No results found."
             continue
         fi
 
-        echo " Streaming: $actual_flac_url"
-        espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Now playing..."
-        mpv --no-video --no-ytdl --cache-secs=30 --demuxer-max-bytes=50MiB --demuxer-max-back-bytes=10MiB --cache-pause=yes --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$actual_flac_url"
-    done
+        selected=$(printf '%s\n' "${items[@]}" | fzf --prompt="Select item > ")
+        [ -z "$selected" ] && continue
+
+        identifier=$(echo "$selected" | sed -E 's/.*\[(.*)\]/\1/')
+        file_list=$(curl -s "https://archive.org/metadata/$identifier" | jq -r '.files[] | select(.format=="Flac") | .name')
+
+        if [ -z "$file_list" ]; then
+            echo "No FLAC files found in $identifier."
+            continue
+        fi
+
+        selected_track=$(echo "$file_list" | fzf --prompt="Select track > ")
+        [ -z "$selected_track" ] && continue
+
+	encoded_file=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$selected_track'''))")
+	stream_url="https://archive.org/download/$identifier/$encoded_file"
+
+	echo " Now playing: $selected_track"
+	espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing:$query"
+	mpv --no-video --cache-secs=30 --user-agent='Mozilla/5.0' "$stream_url"
+	done
+
     exit 0
 fi
 
@@ -121,7 +139,7 @@ while true; do
         fi
 
         if [[ "$mode" == "1" ]]; then
-            mpv --no-video --cache-secs=30 --demuxer-max-bytes=50MiB --demuxer-max-back-bytes=10MiB --cache-pause=yes --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
+            mpv --no-video --no-ytdl --cache-secs=30 --demuxer-max-bytes=50MiB --demuxer-max-back-bytes=10MiB --cache-pause=yes --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
         else
             mpv --no-video --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
         fi
