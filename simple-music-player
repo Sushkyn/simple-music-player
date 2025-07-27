@@ -126,7 +126,7 @@ while true; do
         if [[ -f "$song" ]]; then
             STREAM_URL="$song"
         else
-            STREAM_URL=$(yt-dlp -f 'worstaudio' -g "ytsearch1:$song" 2>/dev/null)
+            STREAM_URL=$(yt-dlp -f 'bestaudio[ext=m4a]/bestaudio' -g "ytsearch1:$song" 2>/dev/null)
         fi
 
         if [ -z "$STREAM_URL" ]; then
