@@ -48,44 +48,66 @@ if [[ "$mode" == "3" ]]; then
         exit 1
     fi
 elif [[ "$mode" == "2" ]]; then
-    while true; do
-        echo -e "\n Enter search query (FLAC only, archive.org):"
-        read -rp ">_: " query
-        [ -z "$query" ] && break
+    echo -e "\n (Archive.org, high-quality formats):"
+while true; do
+    read -rp "Enter track: " track
+    read -rp "Enter album: " album
 
-        search_url="https://archive.org/advancedsearch.php?q=${query// /+}+AND+format%3A(FLAC)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=20&page=1&output=json"
-        results=$(curl -s "$search_url")
+    track_result=$(curl -s "https://archive.org/advancedsearch.php?q=${track// /+}+AND+format:(wav)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=100&page=1&output=json" | jq -r --arg album "$album" '.response.docs[] | select(.title | test($album; "i")) | .identifier' | head -n1)
+    [ "$track_result" ] && album_result=$(curl -s "https://archive.org/metadata/$track_result" | jq -r '.files[] | select(.format=="WAVE") | .name')
 
-        mapfile -t items < <(echo "$results" | jq -r '.response.docs[] | "\(.title) [\(.identifier)]"')
+    [ "$album_result" ] && while IFS= read -r t; do
+        url="https://archive.org/download/$track_result/$(printf '%s' "$t" | sed 's| |%20|g')"
+        playlist_urls+=("$url")
+    done <<< "$album_result"
 
-        if [ ${#items[@]} -eq 0 ]; then
-            echo "No results found."
-            continue
-        fi
+    track_result=$(curl -s "https://archive.org/advancedsearch.php?q=${track// /+}+AND+format:(flac)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=100&page=1&output=json" | jq -r --arg album "$album" '.response.docs[] | select(.title | test($album; "i")) | .identifier' | head -n1)
+    [ "$track_result" ] && album_result=$(curl -s "https://archive.org/metadata/$track_result" | jq -r '.files[] | select(.format=="Flac") | .name')
 
-        selected=$(printf '%s\n' "${items[@]}" | fzf --prompt="Select item > ")
-        [ -z "$selected" ] && continue
+    [ "$album_result" ] && while IFS= read -r t; do
+        url="https://archive.org/download/$track_result/$(printf '%s' "$t" | sed 's| |%20|g')"
+        playlist_urls+=("$url")
+    done <<< "$album_result"
 
-        identifier=$(echo "$selected" | sed -E 's/.*\[(.*)\]/\1/')
-        file_list=$(curl -s "https://archive.org/metadata/$identifier" | jq -r '.files[] | select(.format=="Flac") | .name')
+    track_result=$(curl -s "https://archive.org/advancedsearch.php?q=${track// /+}+AND+format:(flac)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=100&page=1&output=json" | jq -r --arg album "$album" '.response.docs[] | select(.title | test($album; "i")) | .identifier' | head -n1)
+    [ "$track_result" ] && album_result=$(curl -s "https://archive.org/metadata/$track_result" | jq -r '.files[] | select(.format=="24BIT FLAC") | .name')
 
-        if [ -z "$file_list" ]; then
-            echo "No FLAC files found in $identifier."
-            continue
-        fi
+    [ "$album_result" ] && while IFS= read -r t; do
+        url="https://archive.org/download/$track_result/$(printf '%s' "$t" | sed 's| |%20|g')"
+        playlist_urls+=("$url")
+    done <<< "$album_result"
 
-        selected_track=$(echo "$file_list" | fzf --prompt="Select track > ")
-        [ -z "$selected_track" ] && continue
+    track_result=$(curl -s "https://archive.org/advancedsearch.php?q=${track// /+}+AND+format:(m4a)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=100&page=1&output=json" | jq -r --arg album "$album" '.response.docs[] | select(.title | test($album; "i")) | .identifier' | head -n1)
+    [ "$track_result" ] && album_result=$(curl -s "https://archive.org/metadata/$track_result" | jq -r '.files[] | select(.format=="MPEG-4 AUDIO") | .name')
 
-        file_url="https://archive.org/download/$identifier/$(printf '%s' "$selected_track" | sed 's| |%20|g')"
+    [ "$album_result" ] && while IFS= read -r t; do
+        url="https://archive.org/download/$track_result/$(printf '%s' "$t" | sed 's| |%20|g')"
+        playlist_urls+=("$url")
+    done <<< "$album_result"
 
-        echo " Now playing: $selected_track"
-	espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing $query"
-        mpv --no-video --no-ytdl --cache-secs=35 --cache-pause=yes "$file_url"
-    done
+    track_result=$(curl -s "https://archive.org/advancedsearch.php?q=${track// /+}+AND+format:(mp3)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=100&page=1&output=json" | jq -r --arg album "$album" '.response.docs[] | select(.title | test($album; "i")) | .identifier' | head -n1)
+    [ "$track_result" ] && album_result=$(curl -s "https://archive.org/metadata/$track_result" | jq -r '.files[] | select(.format=="VBR MP3") | .name')
 
-    exit 0
+    [ "$album_result" ] && while IFS= read -r t; do
+        url="https://archive.org/download/$track_result/$(printf '%s' "$t" | sed 's| |%20|g')"
+        playlist_urls+=("$url")
+    done <<< "$album_result"
+
+    track_result=$(curl -s "https://archive.org/advancedsearch.php?q=${track// /+}+AND+format:(mp3)&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=100&page=1&output=json" | jq -r --arg album "$album" '.response.docs[] | select(.title | test($album; "i")) | .identifier' | head -n1)
+    [ "$track_result" ] && album_result=$(curl -s "https://archive.org/metadata/$track_result" | jq -r '.files[] | select(.format=="320KBPS MP3") | .name')
+
+    [ "$album_result" ] && while IFS= read -r t; do
+        url="https://archive.org/download/$track_result/$(printf '%s' "$t" | sed 's| |%20|g')"
+        playlist_urls+=("$url")
+    done <<< "$album_result"
+
+    read -rp "Add more tracks? (Y/n): " choice
+    [[ "$choice" =~ ^[Nn]$ ]] && break
+done
+
+printf "%s\n" "${playlist_urls[@]}" | xargs mpv  --no-video --no-ytdl --cache-secs=50 --demuxer-max-bytes=100MiB --demuxer-max-back-bytes=30MiB --cache-pause=yes --network-timeout=30
 fi
+
 if [ -n "$1" ] && [ -d "$1" ]; then
     echo " Found directory: $1. Queuing audio files..."
     while IFS= read -r -d '' file; do
