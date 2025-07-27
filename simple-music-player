@@ -126,8 +126,9 @@ while true; do
         if [[ -f "$song" ]]; then
             STREAM_URL="$song"
         else
-            STREAM_URL=$(yt-dlp -f 'bestaudio[ext=m4a]/bestaudio' -g "ytsearch1:$song" 2>/dev/null)
-        fi
+	STREAM_URL=$(yt-dlp -f 'worstaudio[abr<=64]' --no-playlist --no-live --quiet -g "ytsearch1:$song")
+
+	fi
 
         if [ -z "$STREAM_URL" ]; then
             echo " Failed to get stream URL for: $song"
@@ -136,7 +137,7 @@ while true; do
         fi
 
         if [[ "$mode" == "1" ]]; then
-	mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o="reconnect=1,reconnect_streamed=1 reconnect_delay_max=30" --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
+	mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
 
 	else
             mpv --no-video --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
