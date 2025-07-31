@@ -23,7 +23,6 @@ trap cleanup INT TERM EXIT
 clear
 queue=()
 echo " Welcome to simple-music-player."
-espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Welcome to simple-music-player."
 if [[ "$skip_mode_selection" != "true" ]]; then
     while true; do
         echo "Select mode:"
