@@ -15,7 +15,7 @@ Search, queue, loop, and play — from YouTube, archive or FLAC collections.
  - Loop current song with Shift+l
  - skip current song with q
  - use arrows to skip seconds in current song
-
+ - download the flac songs with wget url.
 #### Required packages
 
 `fzf wget jq ffmpeg mpv yt-dlp espeak`
