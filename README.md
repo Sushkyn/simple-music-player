@@ -28,6 +28,6 @@ curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simp
 ```
 curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-flac-player && chmod +x simple-flac-player && ./simple-flac-player
 ```
-### Get ternux notification
+#### Get ternux notification
 ```
 curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/mpv-termux-notify.sh && chmod +x mpv-termux-notify.sh && ./mpv-termux-notify.sh
