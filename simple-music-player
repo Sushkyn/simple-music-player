@@ -2,7 +2,6 @@
 
 command -v yt-dlp >/dev/null || { echo " yt-dlp not found"; exit 1; }
 command -v mpv >/dev/null || { echo "  mpv not found"; exit 1; }
-command -v jq >/dev/null || { echo "jq not found"; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 if [[ -n "$1" && -f "$1" && "$1" == *.txt ]]; then
