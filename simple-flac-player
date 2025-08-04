@@ -5,7 +5,6 @@ command -v jq >/dev/null || { echo " jq not found"; exit 1; }
 
 track=$1
 only_print_url="false"
-clear
 
 cleanup() {
     reset
@@ -17,8 +16,17 @@ if [ "$1" = "--save" ]; then
     only_print_url="true"
     shift
     track=$1
-fi
 
+    urls=$(curl -s "https://flacdownloader.com/flac/search?query=$track" |
+        jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=FLAC"' | head -n1)
+
+    [ -z "$urls" ] && urls=$(curl -s "https://flacdownloader.com/flac/search?query=$track" |
+        jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=MP3"' | head -n1)
+
+    [ -n "$urls" ] && printf '%s\n' "$urls"
+    exit 0
+fi
+clear
 if [ -f "$track" ] && [ "${track##*.}" = "txt" ]; then
     while IFS= read -r line; do
         [ -z "$line" ] && continue
@@ -32,9 +40,9 @@ else
         jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=MP3"' | head -n1)
 
     if [ "$only_print_url" = "true" ]; then
-        echo "$urls"
+        printf '%s\n' "$urls"
     else
-	echo "Welcome to simple-flac-player."
+        echo "Welcome to simple-flac-player."
         echo "$urls" | xargs -r mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}'
     fi
 fi
