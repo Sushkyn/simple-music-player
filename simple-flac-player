@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 command -v mpv >/dev/null || { echo " mpv not found"; exit 1; }
 command -v jq >/dev/null || { echo " jq not found"; exit 1; }
