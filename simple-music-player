@@ -1,107 +1,43 @@
 #!/usr/bin/env bash
 
-command -v yt-dlp >/dev/null || { echo " yt-dlp not found"; exit 1; }
-command -v mpv >/dev/null || { echo "  mpv not found"; exit 1; }
+command -v mpv >/dev/null || { echo " mpv not found"; exit 1; }
+command -v jq >/dev/null || { echo " jq not found"; exit 1; }
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-if [[ -n "$1" && -f "$1" && "$1" == *.txt ]]; then
-    echo " Found playlist file: $1. Queuing songs..."
-    while IFS= read -r line; do
-        [[ -n "$line" ]] && queue+=("$line")
-    done < "$1"
-    mode="1"
-    skip_mode_selection=true
-fi
+track=$1
+only_print_url="false"
+clear
+echo "Welcome to simple-flac-player."
 
 cleanup() {
-    echo -e "\n Cleaning up..."
     reset
     exit 0
 }
-trap cleanup INT TERM EXIT
-clear
-queue=()
-echo " Welcome to simple-music-player."
-if [[ "$skip_mode_selection" != "true" ]]; then
-    mode="1"
+trap cleanup INT
+
+if [ "$1" = "--save" ]; then
+    only_print_url="true"
+    shift
+    track=$1
 fi
 
-if [ -n "$1" ] && [ -d "$1" ]; then
-    echo " Found directory: $1. Queuing audio files..."
-    while IFS= read -r -d '' file; do
-        queue+=("$file")
-    done < <(find "$1" -type f \( -iname "*.mp3" -o -iname "*.wav" -o -iname "*.flac" -o -iname "*.ogg" -o -iname "*.m4a" \) -print0)
-fi
-
-if [ -n "$1" ] && [ -f "$1" ]; then
-    echo " Found playlist file: $1. Queuing songs..."
+if [ -f "$track" ] && [ "${track##*.}" = "txt" ]; then
     while IFS= read -r line; do
-        [ -n "$line" ] && queue+=("$line")
-    done < "$1"
+        [ -z "$line" ] && continue
+        mpv --no-video "$line"
+    done < "$track"
+else
+    urls=$(curl -s "https://flacdownloader.com/flac/search?query=$track" |
+        jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=FLAC"' | head -n1)
+
+    [ -z "$urls" ] && urls=$(curl -s "https://flacdownloader.com/flac/search?query=$track" |
+        jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=MP3"' | head -n1)
+
+    if [ "$only_print_url" = "true" ]; then
+        echo "$urls"
+    else
+        echo "$urls" | xargs -r mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}'
+    fi
 fi
 
-playlist_loop="N"
-
-while true; do
-    if [ ${#queue[@]} -eq 0 ]; then
-        echo " Add songs to Queue."
-        while true; do
-            read -rp ">_: " song
-            [ -z "$song" ] && break
-            queue+=("$song")
-        done
-
-        if [ ${#queue[@]} -eq 0 ]; then
-            echo " Queue is empty."
-            continue
-        fi
-    fi
-
-    echo -e "\n Starting playback... \n"
-
-    for song in "${queue[@]}"; do
-        clear
-        echo " Now playing: $song"
-        espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now.....  Playing:  $song"
-
-        if [[ -f "$song" ]]; then
-            STREAM_URL="$song"
-        else
-            STREAM_URL=$(yt-dlp -f 'bestaudio[abr<=64]' --no-playlist --no-live --quiet -g "ytsearch1:$song")
-        fi
-
-        if [ -z "$STREAM_URL" ]; then
-            echo " Failed to get stream URL for: $song"
-            espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Failed to get stream URL for: $song"
-            continue
-        fi
-
-        mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL" &
-
-        MPV_PID=$!
-        wait "$MPV_PID"
-        while kill -0 $MPV_PID 2>/dev/null; do
-            read -rsn1 -t 0.1 key
-            if [[ "$key" == "q" ]]; then
-                echo " Skipping..."
-                kill $MPV_PID
-                wait $MPV_PID 2>/dev/null
-                break
-            fi
-        done
-        echo ""
-    done
-
-    espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Do you want to loop the playlist?"
-    read -rp $'\nDo you want to loop the playlist? (Y/N) >_: ' playlist_loop
-    playlist_loop=${playlist_loop^^}
-
-    if [[ "$playlist_loop" == "Y" ]]; then
-        echo " Replaying playlist..."
-        continue
-    else
-        echo " Queue finished."
-        espeak-ng -v en+f3 -s 140 -p 60 -a 150 " Queue finished."
-        queue=()
-    fi
-done
+reset
+exit 0
