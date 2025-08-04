@@ -20,11 +20,11 @@ Search, queue, loop, and play — from YouTube or FLAC collections.
 
 `fzf wget jq ffmpeg mpv yt-dlp espeak`
 
-#### Run the Flac Player
+#### Run the Music Player
 ```
 curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-music-player && chmod +x simple-music-player && ./simple-music-player
 ```
-#### Run the Music Player
+#### Run the Flac Player
 ```
 curl -LO https://raw.githubusercontent.com/Sushkyn/simple-music-player/main/simple-flac-player && chmod +x simple-flac-player && ./simple-flac-player
 ```
