@@ -6,7 +6,6 @@ command -v jq >/dev/null || { echo " jq not found"; exit 1; }
 track=$1
 only_print_url="false"
 clear
-echo "Welcome to simple-flac-player."
 
 cleanup() {
     reset
