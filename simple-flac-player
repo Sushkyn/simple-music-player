@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 command -v mpv >/dev/null || { echo " mpv not found"; exit 1; }
 command -v jq >/dev/null || { echo " jq not found"; exit 1; }
@@ -34,6 +34,7 @@ else
     if [ "$only_print_url" = "true" ]; then
         echo "$urls"
     else
+	echo "Welcome to simple-flac-player."
         echo "$urls" | xargs -r mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}'
     fi
 fi
