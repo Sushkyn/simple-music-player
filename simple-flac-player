@@ -1,0 +1,41 @@
+#!/bin/sh
+
+command -v mpv >/dev/null || { echo " mpv not found"; exit 1; }
+command -v jq >/dev/null || { echo " jq not found"; exit 1; }
+
+track=$1
+only_print_url="false"
+
+cleanup() {
+    reset
+    exit 0
+}
+trap cleanup INT
+
+if [ "$1" = "--save" ]; then
+    only_print_url="true"
+    shift
+    track=$1
+fi
+
+if [ -f "$track" ] && [ "${track##*.}" = "txt" ]; then
+    while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        mpv --no-video "$line"
+    done < "$track"
+else
+    urls=$(curl -s "https://flacdownloader.com/flac/search?query=$track" |
+        jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=FLAC"' | head -n1)
+
+    [ -z "$urls" ] && urls=$(curl -s "https://flacdownloader.com/flac/search?query=$track" |
+        jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=MP3"' | head -n1)
+
+    if [ "$only_print_url" = "true" ]; then
+        echo "$urls"
+    else
+        echo "$urls" | xargs -r mpv --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}'
+    fi
+fi
+
+reset
+exit 0
