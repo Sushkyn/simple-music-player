@@ -10,7 +10,7 @@ Search, queue, loop, and play — from YouTube or FLAC collections.
 
 #### Features
  
- - Create & play your playlist: `./simple-music-player playlist.txt`, save your song names in playlist.txt
+ - Create & play your playlist: `./simple-music-player playlist.txt`, save your song names under each other in playlist.txt
  - Create & play your playlist for flac player:`./simple-flac-player --save "song_name" >> playlist.txt`
  - Loop current song with Shift+l
  - skip current song with q
