@@ -16,6 +16,7 @@ Search, queue, loop, and play — from YouTube or FLAC collections.
  - skip current song with q
  - use arrows to skip seconds in current song
  - download the flac songs with wget url.
+ - use `n=1; while read -r url; do wget -O "$n.flac" "$url"; ((n++)); done < playlist.txt` to download flac playlist
 #### Required packages
 
 `wget jq ffmpeg mpv yt-dlp espeak`
