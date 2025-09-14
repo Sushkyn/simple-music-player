@@ -53,7 +53,7 @@ while true; do
 
         if [ -z "$STREAM_URL" ]; then
             echo "Song not found: $song"
-            espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Song not found: $song"
+            espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Song not found"
             continue
         fi
 	echo "Streaming URL: $STREAM_URL"
