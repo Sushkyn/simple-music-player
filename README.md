@@ -12,11 +12,11 @@ Search, queue, loop, and play — from YouTube or FLAC collections.
  
  - save your song names under each other in playlist.txt
  - play your playlist: `./simple-music-player playlist.txt`, or `./simple-flac-player playlist.txt`
- - add songs to play and make playlist inside music players.
- - Loop current song with Shift+l
+ - add songs to queue inside music players.
+ - download your playlist.txt songs with `./simple-flac-player -d playlist.txt`
+ - Loop current song with Shift+L
  - skip current song with q
  - use arrows to skip seconds in current song
- - download the flac songs with wget url.
 
    #### Required packages
 
