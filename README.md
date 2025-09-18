@@ -1,6 +1,6 @@
 <div align="center">
 
-![Description](example.png)
+![Description](example.jpg)
 
 A lightweight terminal-based music player built with mpv.
 Search, queue, loop, and play — from YouTube or FLAC collections.
