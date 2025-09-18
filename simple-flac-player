@@ -8,7 +8,7 @@ queue=()
 playlist_file=""
 playlist_mtime=0
 if [ -n "$TMUX" ]; then
-    tmux split-window -h
+    tmux split-window -h -p 30
     tmux select-layout even-horizontal
 fi
 clear
