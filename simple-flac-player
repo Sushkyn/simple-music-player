@@ -5,10 +5,11 @@ command -v jq >/dev/null || { echo "jq not found"; exit 1; }
 command -v espeak-ng >/dev/null || { echo "espeak-ng not found"; exit 1; }
 
 queue=()
-
+playlist_file=""
+playlist_mtime=0
 clear
-echo "Welcome to simple-flac-player."
 
+echo "Welcome to simple-flac-player."
 search_and_get_url() {
     track="$1"
     query=$(printf '%s' "$track" | jq -sRr @uri)
@@ -39,6 +40,8 @@ if [[ "$1" == "-d" && -n "$2" && -f "$2" ]]; then
 fi
 
 if [[ -n "$1" && -f "$1" && "$1" == *.txt ]]; then
+    playlist_file="$1"
+    playlist_mtime=$(stat -c %Y "$playlist_file")
     echo "Found playlist file: $1. Queuing songs..."
     while IFS= read -r line; do
         [[ -n "$line" ]] && queue+=("$line")
@@ -59,7 +62,9 @@ while true; do
         fi
     fi
 
-    for song in "${queue[@]}"; do
+    idx=0
+    while [ $idx -lt ${#queue[@]} ]; do
+        song="${queue[$idx]}"
         clear
         echo "Now playing: $song"
         espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing: $song"
@@ -68,12 +73,36 @@ while true; do
         if [ -z "$STREAM_URL" ]; then
             echo "Song not found: $song"
             espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Song not found"
+            ((idx++))
             continue
         fi
         echo "Streaming URL: $STREAM_URL"
         mpv  --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL"
-    done
+        if [[ -n "$playlist_file" ]]; then
+            new_mtime=$(stat -c %Y "$playlist_file")
+            if (( new_mtime > playlist_mtime )); then
+                playlist_mtime=$new_mtime
+                echo "Playlist updated, inserting new songs..."
+                new_queue=()
+                while IFS= read -r line; do
+                    [[ -n "$line" ]] && new_queue+=("$line")
+                done < "$playlist_file"
 
-    espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Queue finished."
-    echo "Replaying playlist..."
+                insert_pos=$((idx+1))
+                for new_song in "${new_queue[@]}"; do
+                    in_queue=false
+                    for q in "${queue[@]}"; do
+                        [[ "$q" == "$new_song" ]] && in_queue=true && break
+                    done
+                    if [[ $in_queue == false ]]; then
+                        queue=("${queue[@]:0:$insert_pos}" "$new_song" "${queue[@]:$insert_pos}")
+                        ((insert_pos++))
+                        echo "Inserted: $new_song"
+                    fi
+                done
+            fi
+        fi
+        ((idx++))
+    done
+    espeak-ng -v en+f3 -s 140 -p 60 -a 150 "End of queue."
 done
