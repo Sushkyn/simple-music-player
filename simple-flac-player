@@ -5,7 +5,6 @@ command -v jq >/dev/null || { echo "jq not found"; exit 1; }
 command -v espeak-ng >/dev/null || { echo "espeak-ng not found"; exit 1; }
 
 queue=()
-playlist_loop="N"
 
 clear
 echo "Welcome to simple-flac-player."
@@ -78,13 +77,5 @@ while true; do
     done
 
     espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Queue finished."
-    read -rp $'\nDo you want to loop the playlist? (Y/N) >_: ' playlist_loop
-    playlist_loop=${playlist_loop^^}
-
-    if [[ "$playlist_loop" == "Y" ]]; then
-        echo "Replaying playlist..."
-        continue
-    else
-        queue=()
-    fi
+    echo "Replaying playlist..."
 done
