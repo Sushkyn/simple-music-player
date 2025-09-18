@@ -10,9 +10,10 @@ Search, queue, loop, and play — from YouTube or FLAC collections.
 
 #### Features
 
- - add songs to queue inside music players.
- - save your song names under each other in playlist.txt
+ - add songs to queue inside music player.
+ - save your song names under playlist.txt
  - play your playlist: `./simple-music-player playlist.txt`, or `./simple-flac-player playlist.txt`
+ - add new songs inside txt while playlist is playing.
  - download your playlist.txt songs with `./simple-flac-player -d playlist.txt`
  - Loop current song with Shift+L
  - skip current song with q
