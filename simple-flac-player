@@ -59,8 +59,6 @@ while true; do
         fi
     fi
 
-    echo -e "\nStarting playback...\n"
-
     for song in "${queue[@]}"; do
         clear
         echo "Now playing: $song"
