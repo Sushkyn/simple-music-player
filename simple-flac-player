@@ -7,6 +7,10 @@ command -v espeak-ng >/dev/null || { echo "espeak-ng not found"; exit 1; }
 queue=()
 playlist_file=""
 playlist_mtime=0
+if [ -n "$TMUX" ]; then
+    tmux split-window -h
+    tmux select-layout even-horizontal
+fi
 clear
 
 echo "Welcome to simple-flac-player."
