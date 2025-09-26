@@ -8,7 +8,7 @@ queue=()
 playlist_file=""
 playlist_mtime=0
 if [ -n "$TMUX" ]; then
-    tmux split-window -h -p 40
+    tmux split-window -h -p 30
 fi
 clear
 
@@ -16,12 +16,20 @@ echo "Welcome to simple-flac-player."
 search_and_get_url() {
     track="$1"
     query=$(printf '%s' "$track" | jq -sRr @uri)
-    url=$(curl -s "https://flacdownloader.com/flac/search?query=$query" \
-        | jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=FLAC"' \
-        | head -n1)
-    [ -z "$url" ] && url=$(curl -s "https://flacdownloader.com/flac/search?query=$query" \
-        | jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=MP3"' \
-        | head -n1)
+url=$(curl -s \
+    --user-agent 'noleak' \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+    "https://flacdownloader.com/flac/search?query=$query" \
+    | jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=FLAC"' \
+    | head -n1)
+
+[ -z "$url" ] && url=$(curl -s \
+    --user-agent 'noleak' \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+    "https://flacdownloader.com/flac/search?query=$query" \
+    | jq -r '.data[] | "https://flacdownloader.com/flac/download?t=\(.id)&f=MP3"' \
+    | head -n1)
+
     echo "$url"
 }
 
