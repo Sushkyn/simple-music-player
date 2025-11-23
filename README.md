@@ -3,7 +3,7 @@
 ![Description](example.jpg)
 
 A lightweight terminal-based music player built with mpv.
-Search, queue, loop, and play — from YouTube or FLAC collections.
+Search, queue, loop, and play — from FLAC collections.
 </div>
 
 ---
