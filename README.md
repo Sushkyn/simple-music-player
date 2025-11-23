@@ -21,7 +21,7 @@ Search, queue, loop, and play — from YouTube or FLAC collections.
 
    #### Required packages
 
-`wget jq ffmpeg mpv yt-dlp espeak tmux`
+`wget jq ffmpeg mpv yt-dlp espeak tmux vosk[speech to text search]`
 
 
 #### Run the Flac Player 
