@@ -70,12 +70,12 @@ while true; do
         song="${queue[$idx]}"
         clear
         echo "Now playing: $song"
-        espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing: $song"
+        #espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing: $song"
         STREAM_URL=$(search_and_get_url "$song")
 
         if [ -z "$STREAM_URL" ]; then
             echo "Song not found: $song"
-            espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Song not found"
+            #espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Song not found"
             ((idx++))
             continue
         fi
@@ -107,5 +107,5 @@ while true; do
         fi
         ((idx++))
     done
-    espeak-ng -v en+f3 -s 140 -p 60 -a 150 "End of queue."
+    #espeak-ng -v en+f3 -s 140 -p 60 -a 150 "End of queue."
 done
