@@ -69,7 +69,7 @@ while true; do
     while [ $idx -lt ${#queue[@]} ]; do
         song="${queue[$idx]}"
         clear
-        echo "Now playing: $song"
+        notify-send -t 5000 $song
         #espeak-ng -v en+f3 -s 140 -p 60 -a 150 "Now playing: $song"
         STREAM_URL=$(search_and_get_url "$song")
 
