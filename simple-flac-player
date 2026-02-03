@@ -79,7 +79,7 @@ while true; do
             ((idx++))
             continue
         fi
-        echo "Streaming URL: $STREAM_URL"
+        echo " $STREAM_URL"
         mpv  --no-video --no-ytdl --cache=yes --cache-secs=90 --demuxer-max-bytes=500MiB --demuxer-max-back-bytes=100MiB --cache-pause=yes --network-timeout=60 --hr-seek=yes --stream-lavf-o=reconnect=1,reconnect_streamed=1,reconnect_delay_max=5 --term-status-msg='l> ${time-pos} / ${duration}' --msg-level=status=info "$STREAM_URL"
         if [[ -n "$playlist_file" ]]; then
             new_mtime=$(stat -c %Y "$playlist_file")
