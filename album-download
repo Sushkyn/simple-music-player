@@ -60,7 +60,7 @@ echo "Download complete. Files saved in: $identifier/"
 read -rp $'\nDo you want to listen to the album? (Y/N) >_: ' play
 
 if [[ "$play" =~ ^[Yy]$ ]]; then
-	mpv "$identifier"
+	mpv "$identifier/*"
     else
     exit 1
 fi
